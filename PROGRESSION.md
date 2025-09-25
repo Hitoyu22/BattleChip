@@ -8,6 +8,10 @@
 - [ ] **Palier 4** : Configuration
 - [ ] **Palier 5** : Deux Joueurs
 
+### Preuve Palier 1
+
+![Étape 1 - Affichage et Bases](image/etape1.png)
+
 ### Preuve Palier 3
 
 ![Étape 3 - Placement des Navires](image/etape3.png)
