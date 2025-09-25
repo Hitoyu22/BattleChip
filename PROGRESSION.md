@@ -4,9 +4,13 @@
 
 - [x] **Palier 1** : Affichage et Bases
 - [ ] **Palier 2** : Interactions
-- [ ] **Palier 3** : Placement des Navires
+- [x] **Palier 3** : Placement des Navires
 - [ ] **Palier 4** : Configuration
 - [ ] **Palier 5** : Deux Joueurs
+
+### Preuve Palier 3
+
+![Étape 3 - Placement des Navires](image/etape3.png)
 
 ## Bonus Implémentés
 
