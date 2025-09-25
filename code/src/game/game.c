@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include "navire.h"
 
 typedef struct
@@ -223,6 +224,59 @@ void place_ships_manually(Board *board, int nb_navires)
     print_board(board);
 }
 
+int can_place_ship(Board *board, int row, int col, int ship_size, int direction)
+{
+    return is_valid_placement(board, col, row, ship_size, (direction == 0) ? HORIZONTAL : VERTICAL);
+}
+
+void place_ship(Board *board, int row, int col, int ship_size, int direction)
+{
+    place_boat_on_board(board, col, row, ship_size, (direction == 0) ? HORIZONTAL : VERTICAL);
+}
+
+int place_ship_randomly(Board *board, int ship_size)
+{
+    int attempts = 0;
+    while (attempts < 100)
+    {
+        int row = rand() % 10;
+        int col = rand() % 10;
+        int direction = rand() % 2;
+
+        if (can_place_ship(board, row, col, ship_size, direction))
+        {
+            place_ship(board, row, col, ship_size, direction);
+            return 1;
+        }
+        attempts++;
+    }
+    return 0;
+}
+
+void place_ships_randomly(Board *board, int nb_navires)
+{
+    int ship_sizes[] = {5, 4, 3, 3, 2, 4, 3, 2, 2};
+    char *ship_names[] = {"Porte-avions", "Croiseur", "Destroyer 1", "Destroyer 2", "Torpilleur", "Navire 6", "Navire 7", "Navire 8", "Navire 9"};
+
+    srand(time(NULL));
+    printf("aleatoire...\n");
+
+    for (int i = 0; i < nb_navires; i++)
+    {
+        if (place_ship_randomly(board, ship_sizes[i]))
+        {
+            printf("✓ %s placé\n", ship_names[i]);
+        }
+        else
+        {
+            printf("✗%s\n", ship_names[i]);
+        }
+    }
+
+    printf("\nfianle\n");
+    print_board(board);
+}
+
 int main()
 {
     int board_width = 10;
@@ -247,7 +301,25 @@ int main()
     init_board(&board, board_width, board_height);
     printf("%dx%d\n", board_width, board_height);
     printf("Nbr navires à placer: %d\n\n", nb_navires);
-    place_ships_manually(&board, nb_navires);
+
+    int choice;
+    printf("Mode de placement:\n");
+    printf("1. Manuel\n");
+    printf("2. Aléatoire\n");
+    printf("Choix: ");
+    scanf("%d", &choice);
+
+    while (getchar() != '\n')
+        ;
+
+    if (choice == 2)
+    {
+        place_ships_randomly(&board, nb_navires);
+    }
+    else
+    {
+        place_ships_manually(&board, nb_navires);
+    }
 
     free_board(&board);
     return 0;
