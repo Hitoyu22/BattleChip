@@ -21,4 +21,5 @@
 ## Répartition du Travail
 
 - **Luce--Guédon Erwan, Sang Eric** : Paliers 1
-- **MATHUREL Bryan 3IABD2** : Paliers 1
+- **MATHUREL Bryan** : Paliers 2
+- **Luce--Guédon Erwan, Sang Eric** : Paliers 3
