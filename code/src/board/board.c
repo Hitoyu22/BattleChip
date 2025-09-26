@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "../../include/navire.h"
+#include "../../include/core/navire.h"
+#include "./../include/core/config.h"
 
 typedef struct
 {
@@ -23,9 +24,42 @@ void init_board(Board *board, int width, int height, int nbNavire, Boat ** boats
     board->width = width;
     board->height = height;
     board->grid = malloc(height * sizeof(TILE *));
-    board->boats = malloc(sizeof(Boat)*nbNavire);
+    board->boats = malloc(sizeof(Boat*)*nbNavire);
+    printf("test25\n");
     board->nbBoat = nbNavire;
-    for (int i = 0; i<nbNavire; i++) cpBoat(board->boats[i],boats[i]);
+
+    Config * conf = initConfig();
+
+    int tab[4] = {conf->SHIP_CARRIER, conf->SHIP_BATTLESHIP, conf->SHIP_DESTROYER, conf->SHIP_SUBMARINE};
+
+    int tailles[nbNavire];
+    int index = 0;
+
+    for (int k = 0; k < 4; k++) {
+        int ship_size;
+        switch(k){
+            case 0: ship_size = 5; break; 
+            case 1: ship_size = 4; break; 
+            case 2: ship_size = 3; break; 
+            case 3: ship_size = 2; break; 
+        }
+
+        for (int i = 0; i < tab[k]; i++) {
+            if (index >= nbNavire) {
+                break;
+            }
+            tailles[index++] = ship_size;
+        }
+    }
+
+    for (int i = 0; i<nbNavire; i++){
+            printf("test26\n");
+        board->boats[i] = malloc(sizeof(Boat));
+            printf("test27\n");
+            board->boats[i]=initBoat(-1,-1,HORIZONTAL,tailles[i],"");
+        //cpBoat(board->boats[i],boats[i]);
+            printf("test28\n");
+    } 
     for (int i = 0; i < height; i++)
     {
         board->grid[i] = malloc(width * sizeof(TILE));
@@ -94,6 +128,10 @@ void place_boat_on_board(Board *board, int x, int y, int length, Orientation ori
             board->grid[y + i][x] = BOAT;
         }
     }
+
+    print_board(board);
+
+
 }
 
 void free_board(Board *board)
@@ -220,6 +258,36 @@ void place_ships_manually(Board *board, int nb_navires)
     printf("finale:\n");
     print_board(board);
 }
+Board * boardCreationConsole(){
+    int board_width = 10;
+    int board_height = 10;
+    Board * board = malloc(sizeof(Board));
+
+    int nb_navires;
+    printf("cmb navires (min: 2, max: 9): ");
+    scanf("%d", &nb_navires);
+
+    if (nb_navires < 2)
+    {
+        nb_navires = 2;
+        printf(" fixé à 2.\n");
+    }
+    else if (nb_navires > 9)
+    {
+        nb_navires = 9;
+        printf(" fixé à 9.\n");
+    }
+    Boat ** navires = malloc(sizeof(Boat*)); 
+
+    init_board(board, board_width, board_height,0,navires);
+    printf("%dx%d\n", board_width, board_height);
+    printf("Nbr navires à placer: %d\n\n", nb_navires);
+    place_ships_manually(board, nb_navires);
+
+    //free_board(board);
+    return board;
+}
+
 Board * boardCreation(){
     int board_width = 10;
     int board_height = 10;
@@ -248,4 +316,38 @@ Board * boardCreation(){
 
     //free_board(board);
     return board;
+}
+
+
+Board ** initGame(){
+    Config * config = initConfig();
+    Board ** tab = malloc(sizeof(Board*)*2);
+
+    int totalShip = 0;
+    totalShip+=config->SHIP_CARRIER;
+    totalShip+=config->SHIP_BATTLESHIP;
+    totalShip+=config->SHIP_DESTROYER;
+    totalShip+=config->SHIP_SUBMARINE;
+
+
+    printf("%d %d\n", config->GRID_WIDTH, config->GRID_HEIGHT);
+    
+    for(int i = 0; i<2; i++) {
+        Boat ** boats = malloc(sizeof(Boat*)*totalShip);
+        tab[i] = malloc(sizeof(Board));
+        printf("test\n");
+        init_board(tab[i],config->GRID_WIDTH,config->GRID_HEIGHT, totalShip, boats);
+        printf("test\n");
+
+        printf("boat %d, width: %d, hz=: %d\n", i, tab[i]->width, tab[i]->height);
+    }
+    return tab;
+}
+
+
+void freeGame(Board ** tab){
+    for (int i =0 ; i<2;i++){
+        free_board(tab[i]);
+    }
+    free(tab);
 }

@@ -37,4 +37,8 @@ void place_ships_manually(Board *board, int nb_navires);
 
 Board * boardCreation();
 
+Board ** initGame();
+
+void freeGame(Board ** tab);
+
 #endif

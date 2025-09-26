@@ -4,10 +4,15 @@
 #include "./../../include/local/confirmation.h"
 #include "./../../include/local/game.h"
 #include "./../../include/sdl/music.h"
+#include "./../../include/core/board.h"
+#include "./../../include/core/config.h"
+#include "./../../include/core/interaction.h"
 #include <time.h>
 
 
-char **get_table(Player *p, char **table1, char **table2) {
+
+
+TILE **get_table(Player *p, TILE **table1, TILE **table2) {
     if (p->player_id == 1) {
         return (p->screen == 0) ? table1 : table2;
     } else {
@@ -27,44 +32,45 @@ void init_table(char ** table, int rows, int columns){
 }
 
 void start_solo_mode(SDL_Renderer *renderer) {
+
+
+    Board ** board = initGame();
+
+    printf("test3\n");
+
     Player player1 = {.player_id = 1, .screen = 1};
     Player player2 = {.player_id = 2, .screen = 1};
 
-    int rows = 10, columns = 26;
-    char **table1 = malloc(sizeof(char*) * rows);
-    char **table2 = malloc(sizeof(char*) * rows);
-    init_table(table1, rows, columns);
-    init_table(table2, rows, columns);
-
+    printf("test3\n");
+    printf("width : %d  height : %d\n", board[0]->width,board[0]->height);
+    int rows = board[0]->width;
+    int columns = board[0]->height;
+    printf("test3\n");
     if (!show_player_choice(1, &player1.character, &player1.choice_position, renderer)) {
         printf("Joueur 1 a annulé, retour au menu.\n");
-        for (int i = 0; i < rows; i++) {
-            free(table1[i]);
-            free(table2[i]);
-        }
-        free(table1);
-        free(table2);
+        
+        free(board);
+        
         return;
     }
 
-    if (player1.choice_position == 0)
-        place_boats_visual(rows, columns, table1, renderer);
+        printf("test3\n");
+
+    if (player1.choice_position == 0){
+        printf("test\n");
+        place_boats_visual(board[0], renderer);
+    }
     else
         printf("Automatic\n");
 
     if (!show_player_choice(2, &player2.character, &player2.choice_position, renderer)) {
         printf("Joueur 2 a annulé, retour au menu.\n");
-        for (int i = 0; i < rows; i++) {
-            free(table1[i]);
-            free(table2[i]);
-        }
-        free(table1);
-        free(table2);
+        freeGame(board);
         return;
     }
 
     if (player2.choice_position == 0)
-        place_boats_visual(rows, columns, table2, renderer);
+        place_boats_visual(board[1], renderer);
     else
         printf("Automatic\n");
 
@@ -78,18 +84,32 @@ void start_solo_mode(SDL_Renderer *renderer) {
     long start_time = time(NULL);
 
     while (running) {
-        char **current_table = get_table(current, table1, table2);
+
+        printf("test 100\n");
+        TILE **current_table = get_table(current, board[0]->grid, board[1]->grid);
+        printf("test 100\n");
 
         int action = show_map(rows, columns, current_table, current,
                               renderer, start_time, &position);
 
+                              printf("test 100\n");
+        printf("test 101\n");
         if (action == SELECT_QUIT) {
             running = 0;
 
         } else if (action == SELECT_SWITCH) {
             current->screen = 1 - current->screen;
-
+        printf("test 102\n");
         } else if (action == SELECT_CELL) {
+            
+            printf("pressé\n");
+            if (attack(board[current->player_id%2], position.posX, position.posY)){
+
+                if(isEnd(board[current->player_id%2]->boats, board[current->player_id%2]->nbBoat)){
+                    printf("fini\n");
+                }
+            }
+
             printf("Joueur %d a sélectionné case (%d, %d)\n",
                    current->player_id, position.posX, position.posY);
 
@@ -101,7 +121,7 @@ void start_solo_mode(SDL_Renderer *renderer) {
                 running = 0;
             }
         }
-
+        printf("test 103\n");
 
         if (5 == 2){
             printf("Touché");
@@ -127,12 +147,7 @@ void start_solo_mode(SDL_Renderer *renderer) {
             playSong("./assets/music/fin.mp3");
     }
 
-    for (int i = 0; i < rows; i++) {
-        free(table1[i]);
-        free(table2[i]);
-    }
-    free(table1);
-    free(table2);
+    freeGame(board);
 }
 
 

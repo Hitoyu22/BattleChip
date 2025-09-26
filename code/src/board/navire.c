@@ -1,15 +1,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "../../include/navire.h"
+#include "../../include/core/navire.h"
 #include <stdio.h>
 
 char cpBoat(Boat * boat1, Boat * boat2){
     boat1->x = boat2->x;
+            printf("test30\n");
+
     boat1->y = boat2->y;
+        printf("test30\n");
     boat1->taille = boat2->taille;
     boat1->orientation = boat2->orientation;
     boat1->etat = malloc(sizeof(int)*boat2->taille);
+        printf("test30\n");
     for(int i = 0; i<boat2->taille; i++) (boat1->etat)[i] = (boat2->etat)[i];
     boat1->pv = boat2->x;
     strcpy(boat1->nom,boat2->nom);

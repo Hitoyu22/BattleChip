@@ -52,7 +52,7 @@ char createEmptyFile(char * name){
 }
 
 char writeInLog(char * log){
-    char * gameLog = "../game/log.txt";
+    char * gameLog = "./src/game/log.txt";
     FILE * logFile = NULL;
     char endWithReturnLine = 1;
     if (strlen(log)<=0) endWithReturnLine = 0;
@@ -91,6 +91,9 @@ Config * getDefaultConfig(){
 }
 
 Config * confRestriction(Config * config){
+
+    printf("%d %d", config->GRID_HEIGHT, config->GRID_WIDTH);
+
     int pb = 0;
     if (config->GRID_WIDTH<7) {
         writeInLog("Config - Grid width is under 7, it is not acceptable !\n");
@@ -146,7 +149,7 @@ char canBeInteger(char * str){
 }
 
 Config * initConfig(){
-    char * name = "../code/config.txt";
+    char * name = "./config.txt";
     Config * config = NULL;
     FILE * f = NULL;
     if ((config = malloc(sizeof(Config)))==NULL){

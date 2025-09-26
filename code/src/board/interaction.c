@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../include/board.h"
+#include "../../include/core/board.h"
 
 
 int posInBoat(Boat * boat, int x, int y){
@@ -24,9 +24,14 @@ char killBoat(Boat * boat, Board * board){
     return 1;
 }
 
-char attack(Board * board/*, Boat ** bateaux*/, int posX, int posY){
+char attack(Board * board/*, Boat ** bateaux*/, int posY, int posX){
+                print_board(board);
     if ((board->grid)[posY][posX]==WATER) {
         (board->grid)[posY][posX]=SHOT_WATER;
+            printf("pas touché\n");
+
+
+
         return 0;
     } else if ((board->grid)[posY][posX]==BOAT) {
         (board->grid)[posY][posX] = SHOT_BOAT;
@@ -38,13 +43,16 @@ char attack(Board * board/*, Boat ** bateaux*/, int posX, int posY){
                 }
             }
         }
+        printf("touché\n");
         return 1;
     }
+    printf("pas touché\n");
     return 0 ;
 }
 
-char isEnd(Boat ** boats){
-    for (int i = 0; i < 5; i++){
+char isEnd(Boat ** boats, int nbBoat){
+    printf("nombre bateau %d\n", nbBoat);
+    for (int i = 0; i < nbBoat; i++){
         if (isAlive(boats[i])) return 0;
     }
     return 1;

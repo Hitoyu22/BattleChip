@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdlib.h>
 #include "../../include/board.h"
 #include "../../include/interaction.h"
@@ -20,7 +20,7 @@ Board ** initGame(){
     return tab;
 }
 
-int main()
+int test()
 {   
     Board * board = boardCreation();
     printf("%d\n",attack(board,1,1));
@@ -29,3 +29,5 @@ int main()
     free(board);
     return 0;
 }
+
+*/

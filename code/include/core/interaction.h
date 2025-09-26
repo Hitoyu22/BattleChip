@@ -11,6 +11,6 @@ char killBoat(Boat * boat, Board * board);
 
 char attack(Board * board, int posX, int posY);
 
-char isEnd(Boat ** boats);
+char isEnd(Boat ** boats, int nbBoat);
 
 #endif

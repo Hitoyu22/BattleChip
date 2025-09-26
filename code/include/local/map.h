@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "./../../include/local/game.h"
+#include "./../../include/core/board.h"
 
 #define SELECT_NONE   -1
 #define SELECT_CELL    1 
@@ -19,7 +20,7 @@ typedef struct {
 } SelectedPosition;
 
 
-int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *renderer, long timestamp, SelectedPosition *positions);
+int show_map(int rows, int columns, TILE **table, Player *player, SDL_Renderer *renderer, long timestamp, SelectedPosition *positions);
 
 
 #endif

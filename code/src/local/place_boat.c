@@ -5,26 +5,30 @@
 #include <time.h>
 #include "./../../include/sdl/sdl_utils.h"
 #include "./../../include/local/place_boat.h"
+#include "./../../include/core/board.h"
 
-int place_boats_visual(int rows, int columns, char **table, SDL_Renderer *renderer) {
+int place_boats_visual(Board * board, SDL_Renderer *renderer) {
     SDL_Event event;
-    const int width = 1000;
-    int grid_size = (width - 100) / columns;
     int start_x = 50, start_y = 50;
 
-    int boat_lengths[] = {5,4,3,3,2};
-    int num_boats = sizeof(boat_lengths)/sizeof(int);
+    int height = board->height;
+    int width = board->width;
+    int num_boats = board->nbBoat;
+    int grid_size_x = (1000 - 2*start_x) / width;
+    int grid_size_y = (1000 - 2*start_y) / height;
+    int grid_size = (grid_size_x < grid_size_y) ? grid_size_x : grid_size_y;
 
     TTF_Font *font = load_font("./assets/fonts/font.ttf",24);
     SDL_Color white = {255,255,255,255};
     SDL_Color red = {255,0,0,255};
     SDL_Color yellow = {255,255,0,255};
     SDL_Color blue = {0,100,255,255};
+    SDL_Color gray = {100,100,100,255};
 
     srand(time(NULL));
 
     for(int b=0;b<num_boats;b++){
-        int length = boat_lengths[b];
+        int length = board->boats[b]->taille;
         int placed = 0;
         int rotate = 0;
         int mx=0,my=0;
@@ -40,8 +44,7 @@ int place_boats_visual(int rows, int columns, char **table, SDL_Renderer *render
                     case SDL_MOUSEBUTTONDOWN:
                         if (event.button.button == SDL_BUTTON_LEFT) {
                             if (valid) {
-                                printf("Bateau %d placé en (%d,%d) orientation %c\n",
-                                    length, my, mx, rotate ? 'v' : 'h');
+                                place_boat_on_board(board, mx, my, length, rotate ? VERTICAL : HORIZONTAL);    
                                 placed = 1;
                             }
                         }
@@ -57,30 +60,38 @@ int place_boats_visual(int rows, int columns, char **table, SDL_Renderer *render
                 }
             }
 
-            if(rotate) valid = (my+length <= rows && mx < columns);
-            else valid = (mx+length <= columns && my < rows);
+            valid = 1;
+            for(int i=0;i<length;i++){
+                int r = my + (rotate ? i : 0);
+                int c = mx + (rotate ? 0 : i);
+                if(r>=height || c>=width || board->grid[r][c] != WATER){
+                    valid = 0;
+                    break;
+                }
+            }
 
             SDL_SetRenderDrawColor(renderer,0,0,0,255);
             SDL_RenderClear(renderer);
 
-            for(int i=0;i<rows;i++){
-                for(int j=0;j<columns;j++){
+            for(int i=0;i<height;i++){
+                for(int j=0;j<width;j++){
                     SDL_Rect cell={start_x+j*grid_size,start_y+i*grid_size,grid_size-2,grid_size-2};
-                    SDL_Color color = blue;
-                    if(table) {
-                    }
+                    SDL_Color color;
+                    if(board->grid[i][j] == BOAT) color = gray;
+                    else color = blue;
                     SDL_SetRenderDrawColor(renderer,color.r,color.g,color.b,color.a);
                     SDL_RenderFillRect(renderer,&cell);
                 }
             }
 
-            for(int j=0;j<columns;j++){
+            for(int j=0;j<width;j++){
                 char txt[2]={'A'+j,0};
                 int tw,th;
                 TTF_SizeText(font,txt,&tw,&th);
                 render_text(renderer,txt,start_x+j*grid_size+(grid_size-tw)/2,start_y-40,font,white);
             }
-            for(int i=0;i<rows;i++){
+
+            for(int i=0;i<height;i++){
                 char txt[8];
                 snprintf(txt,sizeof(txt),"%d",i+1);
                 int tw,th;
@@ -91,7 +102,7 @@ int place_boats_visual(int rows, int columns, char **table, SDL_Renderer *render
             for(int i=0;i<length;i++){
                 int r = my + (rotate ? i : 0);
                 int c = mx + (rotate ? 0 : i);
-                if(r<rows && c<columns){
+                if(r<height && c<width){
                     SDL_Rect cell={start_x+c*grid_size,start_y+r*grid_size,grid_size-2,grid_size-2};
                     if(valid) SDL_SetRenderDrawColor(renderer,yellow.r,yellow.g,yellow.b,yellow.a);
                     else{

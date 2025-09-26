@@ -1,0 +1,19 @@
+Config - Grid width is under 7, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !
+Config - The total number of ships is under 2, it is not acceptable !
+Config - Grid width is under 7, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !
+Config - The total number of ships is under 2, it is not acceptable !
+Config - Grid width is under 7, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !
+Config - The total number of ships is under 2, it is not acceptable !
+Config - The ships are too many for the grid, it is not acceptable !
+Config - error when opening config file
+Config - Grid width is over 26, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !
+Config - The total number of ships is under 2, it is not acceptable !
+Config - Grid width is over 26, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !
+Config - The total number of ships is under 2, it is not acceptable !
+Config - Grid width is over 26, it is not acceptable !
+Config - Grid heigth is over 26, it is not acceptable !

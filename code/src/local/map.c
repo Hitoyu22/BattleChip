@@ -7,8 +7,11 @@
 #include "./../../include/sdl/sdl_utils.h"
 #include "./../../include/local/game.h"
 #include "./../../include/local/map.h"
+#include "./../../include/core/board.h"
 
-int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *renderer, long timestamp, SelectedPosition *positions) {
+// Inversion rows et columns
+int show_map(int columns, int rows, TILE **table, Player *player, SDL_Renderer *renderer, long timestamp, SelectedPosition *positions) {
+
 
     SDL_Event event;
     const int width = 1000, height = 1000;
@@ -22,6 +25,8 @@ int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *
     SDL_Texture *img_sananes1  = load_texture(renderer, "./assets/images/sananes1.png");
     SDL_Texture *img_wajnberg  = load_texture(renderer, "./assets/images/wajnberg.png");
     SDL_Texture *img_wajnberg1 = load_texture(renderer, "./assets/images/wajnberg1.png");
+
+
 
 
     printf("%d\n", player->screen);
@@ -85,17 +90,16 @@ int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *
         }
 
         for (int i = 0; i < rows; i++) {
+            //if (!table[i]) continue;
             char txt[8];
             snprintf(txt, sizeof(txt), "%d", i+1);
             int tw, th;
             TTF_SizeText(font, txt, &tw, &th);
             render_text(renderer, txt, start_x - 40 + (40 - tw)/2, start_y + i*grid_size + (grid_size - th)/2, font, white);
-
             for (int j = 0; j < columns; j++) {
                 SDL_Rect cell = {start_x + j*grid_size, start_y + i*grid_size, grid_size - 2, grid_size - 2};
-                char c = table[i][j];
-
-                if (c == '#') {
+                TILE c = table[i][j];
+                if (c == BOAT) {
                     if (player->character == 0) {
                         if (player->screen == 0)
                             render_texture(renderer, img_sananes, cell.x, cell.y, cell.w, cell.h);
@@ -107,7 +111,7 @@ int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *
                         else
                             SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255), SDL_RenderFillRect(renderer, &cell);
                     }
-                } else if (c == '*') {
+                } else if (c == KILLED_BOAT) {
                     if (player->character == 0) {
                         if (player->screen == 0)
                             render_texture(renderer, img_sananes1, cell.x, cell.y, cell.w, cell.h);
@@ -121,15 +125,16 @@ int show_map(int rows, int columns, char **table, Player *player, SDL_Renderer *
                     }
                 } else {
                     switch (c) {
-                        case '.': SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255); break;
-                        case 'o': SDL_SetRenderDrawColor(renderer, 0, 50, 200, 255); break;
-                        case 'X': SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); break;
+                        case WATER: SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255); break;
+                        case SHOT_WATER: SDL_SetRenderDrawColor(renderer, 0, 50, 200, 255); break;
+                        case SHOT_BOAT: SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); break;
                         default: SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255); break;
                     }
                     SDL_RenderFillRect(renderer, &cell);
                 }
             }
         }
+
 
         long elapsed = time(NULL) - timestamp;
         int minutes = elapsed / 60;
