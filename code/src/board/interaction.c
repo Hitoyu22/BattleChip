@@ -57,3 +57,15 @@ char isEnd(Boat ** boats, int nbBoat){
     }
     return 1;
 }
+
+
+char isEndTwo(TILE **table, int rows, int columns) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            if (table[i][j] == BOAT) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}

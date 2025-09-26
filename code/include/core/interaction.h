@@ -13,4 +13,6 @@ char attack(Board * board, int posX, int posY);
 
 char isEnd(Boat ** boats, int nbBoat);
 
+char isEndTwo(TILE **table, int rows, int columns);
+
 #endif

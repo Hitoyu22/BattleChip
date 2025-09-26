@@ -25,7 +25,6 @@ void init_board(Board *board, int width, int height, int nbNavire, Boat ** boats
     board->height = height;
     board->grid = malloc(height * sizeof(TILE *));
     board->boats = malloc(sizeof(Boat*)*nbNavire);
-    printf("test25\n");
     board->nbBoat = nbNavire;
 
     Config * conf = initConfig();
@@ -53,12 +52,9 @@ void init_board(Board *board, int width, int height, int nbNavire, Boat ** boats
     }
 
     for (int i = 0; i<nbNavire; i++){
-            printf("test26\n");
         board->boats[i] = malloc(sizeof(Boat));
-            printf("test27\n");
             board->boats[i]=initBoat(-1,-1,HORIZONTAL,tailles[i],"");
         //cpBoat(board->boats[i],boats[i]);
-            printf("test28\n");
     } 
     for (int i = 0; i < height; i++)
     {
@@ -335,9 +331,7 @@ Board ** initGame(){
     for(int i = 0; i<2; i++) {
         Boat ** boats = malloc(sizeof(Boat*)*totalShip);
         tab[i] = malloc(sizeof(Board));
-        printf("test\n");
         init_board(tab[i],config->GRID_WIDTH,config->GRID_HEIGHT, totalShip, boats);
-        printf("test\n");
 
         printf("boat %d, width: %d, hz=: %d\n", i, tab[i]->width, tab[i]->height);
     }
