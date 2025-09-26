@@ -88,6 +88,23 @@ void place_boat_on_board(Board *board, int x, int y, int length, Orientation ori
     }
 }
 
+typedef enum
+{
+    BOT_NUIT_BLANCHE,
+    BOT_MEDIUM,
+    BOT_IMPOSSIBLE
+} BotLevel;
+
+typedef struct
+{
+    Position *targets;
+    int target_count;
+    int current_index;
+    BotLevel level;
+    Board *board;
+    int *shot_map;
+} Bot;
+
 void hardboat(Board *board)
 {
     place_boat_on_board(board, 0, 0, 5, HORIZONTAL);
@@ -95,6 +112,101 @@ void hardboat(Board *board)
     place_boat_on_board(board, 0, 2, 3, HORIZONTAL);
     place_boat_on_board(board, 8, 0, 3, VERTICAL);
     place_boat_on_board(board, 0, 4, 2, HORIZONTAL);
+}
+
+Position bot_nuit_blanche_target(Bot *bot)
+{
+    Position target;
+    do
+    {
+        target.row = rand() % bot->board->height;
+        target.col = rand() % bot->board->width;
+    } while (bot->shot_map[target.row * bot->board->width + target.col]);
+    bot->shot_map[target.row * bot->board->width + target.col] = 1;
+    return target;
+}
+
+Position bot_medium_target(Bot *bot)
+{
+    Position invalid = {-1, -1};
+    return invalid;
+}
+
+Position bot_impossible_target(Bot *bot)
+{
+    if (bot->current_index < bot->target_count)
+    {
+        Position target = bot->targets[bot->current_index];
+        bot->current_index++;
+        return target;
+    }
+    Position invalid = {-1, -1};
+    return invalid;
+}
+
+void init_bot(Bot *bot, Board *board, BotLevel level)
+{
+    bot->level = level;
+    bot->board = board;
+    bot->current_index = 0;
+    bot->targets = NULL;
+    bot->target_count = 0;
+    bot->shot_map = NULL;
+
+    if (level == BOT_NUIT_BLANCHE)
+    {
+        bot->shot_map = calloc(board->width * board->height, sizeof(int));
+    }
+    else if (level == BOT_IMPOSSIBLE)
+    {
+        for (int i = 0; i < board->height; i++)
+        {
+            for (int j = 0; j < board->width; j++)
+            {
+                if (board->grid[i][j] == BOAT)
+                {
+                    bot->target_count++;
+                }
+            }
+        }
+        bot->targets = malloc(bot->target_count * sizeof(Position));
+        int index = 0;
+        for (int i = 0; i < board->height; i++)
+        {
+            for (int j = 0; j < board->width; j++)
+            {
+                if (board->grid[i][j] == BOAT)
+                {
+                    bot->targets[index].row = i;
+                    bot->targets[index].col = j;
+                    index++;
+                }
+            }
+        }
+    }
+}
+
+Position get_bot_target(Bot *bot)
+{
+    switch (bot->level)
+    {
+    case BOT_NUIT_BLANCHE:
+        return bot_nuit_blanche_target(bot);
+    case BOT_MEDIUM:
+        return bot_medium_target(bot);
+    case BOT_IMPOSSIBLE:
+        return bot_impossible_target(bot);
+    default:
+        return bot_nuit_blanche_target(bot);
+    }
+}
+
+void free_bot(Bot *bot)
+{
+    if (bot->targets)
+        free(bot->targets);
+    if (bot->shot_map)
+        free(bot->shot_map);
 }
 
 void free_board(Board *board)
@@ -239,8 +351,8 @@ int place_ship_randomly(Board *board, int ship_size)
     int attempts = 0;
     while (attempts < 100)
     {
-        int row = rand() % 10;
-        int col = rand() % 10;
+        int row = rand() % board->height;
+        int col = rand() % board->width;
         int direction = rand() % 2;
 
         if (can_place_ship(board, row, col, ship_size, direction))
@@ -279,8 +391,23 @@ void place_ships_randomly(Board *board, int nb_navires)
 
 int main()
 {
-    int board_width = 10;
-    int board_height = 10;
+    int board_width, board_height;
+
+    printf("Taille du plateau:\n");
+    printf("Largeur (5-26): ");
+    scanf("%d", &board_width);
+    printf("Hauteur (5-26): ");
+    scanf("%d", &board_height);
+
+    if (board_width < 5)
+        board_width = 5;
+    if (board_width > 26)
+        board_width = 26;
+    if (board_height < 5)
+        board_height = 5;
+    if (board_height > 26)
+        board_height = 26;
+
     Board board;
 
     int nb_navires;
@@ -306,6 +433,7 @@ int main()
     printf("Mode de placement:\n");
     printf("1. Manuel\n");
     printf("2. Aléatoire\n");
+    printf("3. Test Bot\n");
     printf("Choix: ");
     scanf("%d", &choice);
 
@@ -315,6 +443,49 @@ int main()
     if (choice == 2)
     {
         place_ships_randomly(&board, nb_navires);
+    }
+    else if (choice == 3)
+    {
+        hardboat(&board);
+        print_board(&board);
+
+        printf("\nTest des bots:\n");
+        printf("1. Nuit blanche\n");
+        printf("2. Medium\n");
+        printf("3. Impossible\n");
+        printf("Choix: ");
+
+        int bot_choice;
+        scanf("%d", &bot_choice);
+
+        BotLevel level = BOT_NUIT_BLANCHE;
+        switch (bot_choice)
+        {
+        case 2:
+            level = BOT_MEDIUM;
+            break;
+        case 3:
+            level = BOT_IMPOSSIBLE;
+            break;
+        default:
+            level = BOT_NUIT_BLANCHE;
+            break;
+        }
+
+        Bot bot;
+        init_bot(&bot, &board, level);
+
+        printf("\nBot cible :\n");
+        for (int i = 0; i < 10 && (level != BOT_IMPOSSIBLE || i < bot.target_count); i++)
+        {
+            Position target = get_bot_target(&bot);
+            if (target.row == -1)
+                break;
+            printf("%c%d ", 'A' + target.col, target.row + 1);
+        }
+        printf("\n");
+
+        free_bot(&bot);
     }
     else
     {
