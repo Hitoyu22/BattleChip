@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "sdl_utils.h": "c",
+        "sdl_ttf.h": "c",
+        "menu.h": "c",
+        "sdl.h": "c",
+        "sdl_image.h": "c",
+        "game.h": "c",
+        "start_player.h": "c",
+        "map.h": "c"
+    }
+}
