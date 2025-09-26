@@ -23,7 +23,6 @@ char isFileAccessible(char * name){
 
 char addGlobalError(char * error){
     //Fonction utilisée seulement quand pb pour ecrire dans le fichier de log (c'est pour ca l'appel system et pas du fopen)
-    FILE * f = NULL;
     char * name = "../globalErr.txt";
     if (!isFileAccessible(name)){
         system("touch ../globalErr.txt");
@@ -149,7 +148,6 @@ char canBeInteger(char * str){
 Config * initConfig(){
     char * name = "../code/config.txt";
     Config * config = NULL;
-    char * gameLog = "../game/log.txt";
     FILE * f = NULL;
     if ((config = malloc(sizeof(Config)))==NULL){
         writeInLog("Memory allocation - error when allocating memory for config pointer\n");

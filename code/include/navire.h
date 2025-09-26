@@ -29,14 +29,16 @@ typedef struct
     int est_coule;
 } Boat;
 
-Boat *creer_navire(int taille);
-
-void detruire_navire(Boat *navire);
+char cpBoat(Boat * boat1, Boat * boat2);
 
 void placer_navire(Boat *navire, int x, int y, Orientation orientation);
 
-int tirer_sur_navire(Boat *navire, int x_tir, int y_tir);
+Boat * initBoat(int x, int y, Orientation orientation, int taille,char * nom);
 
-int navire_est_coule(Boat *navire);
+void freeBoat(Boat * boat);
+
+char isAlive(Boat * boat);
+
+void initialiser_flotte(Boat flotte[], int *nb_navires);
 
 #endif
