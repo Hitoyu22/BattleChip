@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 EXEC = BattleChip
+=======
+EXEC = ../executable/battlechip
+>>>>>>> origin/main
 
 CC = gcc -g
 
@@ -8,7 +12,10 @@ SRC_DIR = src
 OBJ_DIR = object
 INCLUDE_DIR = include
 
+<<<<<<< HEAD
 LIBS = `sdl2-config --libs` -lSDL2_ttf -lSDL2_image -lSDL2_net -lSDL2_mixer -lm -L/usr/lib
+=======
+>>>>>>> origin/main
 
 SRC_FILES := $(shell find $(SRC_DIR) -name '*.c')
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
@@ -30,4 +37,8 @@ fclean: clean
 
 re: fclean all
 
+<<<<<<< HEAD
 .PHONY: all clean fclean re
+=======
+.PHONY: all clean fclean re
+>>>>>>> origin/main
